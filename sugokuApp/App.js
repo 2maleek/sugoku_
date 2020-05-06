@@ -3,6 +3,8 @@ import { View, StyleSheet} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Constants from 'expo-constants';
+import store from './store'
+import { Provider } from 'react-redux'
 
 import Home from './screens/Home';
 import Games from './screens/Games';
@@ -12,7 +14,7 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return(
-    <>
+    <Provider store={store}>
       <View style={styles.statusBar} />
         <NavigationContainer>
           <Stack.Navigator>
@@ -22,7 +24,7 @@ export default function App() {
             <Stack.Screen name="Finish" component={Finish} options={{headerShown: false,}}></Stack.Screen>
           </Stack.Navigator>
         </NavigationContainer>
-    </>
+    </Provider>
   )
 }
 const styles = StyleSheet.create({

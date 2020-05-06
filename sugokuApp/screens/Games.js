@@ -1,14 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Alert } from 'react-native';
+import { useSelector, useDispatch} from 'react-redux'
+import { getBoard, setAnswer } from '../store/actions/sugokuActions'
 
 export default function Games(props) {
   
   const name = props.route.params.name
   const level = props.route.params.level
 
+  const boards = useSelector(state => state.sugokuReducers.board)
+  const answers = useSelector(state => state.sugokuReducers.answer)
+  
+  const dispatch = useDispatch()
+
   const [board, setBoard] = useState([])
-  const [answer, setAnswer] = useState([[]])
-  let temp = []
+  const [answer, setAnswer] = useState([])
   const encodeBoard = (board) => board.reduce((result, row, i) => result + `%5B${encodeURIComponent(row)}%5D${i === board.length -1 ? '' : '%2C'}`, '')
 
   const encodeParams = (params) => 
@@ -25,7 +31,7 @@ export default function Games(props) {
     })
       .then(res => res.json())
       .then(result => {
-          setAnswer(result.solution)
+          dispatch(setAnswer(result.solution))
       })
       .catch(console.warn)
   }
@@ -66,6 +72,7 @@ export default function Games(props) {
     setAnswer(temp)
   }
   useEffect(() => {
+    // dispatch(getBoard(level))
     fetch('https://sugoku.herokuapp.com/board?difficulty='.concat(level))
     .then(res => res.json())
     .then(data => {
