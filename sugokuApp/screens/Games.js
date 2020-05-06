@@ -7,7 +7,7 @@ export default function Games(props) {
   const level = props.route.params.level
 
   const [board, setBoard] = useState([])
-  const [answer, setAnswer] = useState([])
+  const [answer, setAnswer] = useState([[]])
   let temp = []
   const encodeBoard = (board) => board.reduce((result, row, i) => result + `%5B${encodeURIComponent(row)}%5D${i === board.length -1 ? '' : '%2C'}`, '')
 
@@ -25,7 +25,7 @@ export default function Games(props) {
     })
       .then(res => res.json())
       .then(result => {
-          setBoard(result.solution)
+          setAnswer(result.solution)
       })
       .catch(console.warn)
   }
@@ -38,25 +38,24 @@ export default function Games(props) {
     })
       .then(res => res.json())
       .then(result => {
-        Alert.alert(
-          "Unsolved",
-          "Continue ?",
-          [
-            {
-              text: "Exit",
-              onPress: () => props.navigation.navigate('Home'),
-              style: "cancel"
-            },
-            { text: "OK", onPress: () => console.log("OK Pressed") }
-          ],
-          { cancelable: false }
-        );
-        // console.log(result)
-        // if (result.status === 'unsolved' ) {
-        //   alert('Unsolved: Try again!')
-        // } else {
-        //   props.navigation.navigate('Finish', { name, isWin: true })
-        // }
+        console.log(result.status)
+        if (result.status === 'unsolved' ) {
+          Alert.alert(
+            "Unsolved",
+            "Continue ?",
+            [
+              {
+                text: "Exit",
+                onPress: () => props.navigation.navigate('Home'),
+                style: "cancel"
+              },
+              { text: "OK", onPress: () => console.log("OK Pressed") }
+            ],
+            { cancelable: false }
+          );
+        } else {
+          props.navigation.navigate('Finish', { name, isWin: true })
+        }
       })
       .catch(console.warn)
   }
@@ -70,8 +69,8 @@ export default function Games(props) {
     fetch('https://sugoku.herokuapp.com/board?difficulty='.concat(level))
     .then(res => res.json())
     .then(data => {
-      setBoard(data.board)
       setAnswer(data.board)
+      setBoard(data.board)
     })
 
   }, [])
@@ -81,19 +80,19 @@ export default function Games(props) {
       <Text>Level : {level}</Text>
 
       <View style={styles.boxes}>
-        { board.map((row, i) => {
+        { board ? board.map((row, i) => {
           return (
             <View key={i} style={styles.column}>
               { row.map((col, j) => {
                 if(col > 0) {
                   return <TextInput key={j} style={styles.fixbox} editable={false}>{col}</TextInput>
                 }else {
-                  return <TextInput key={j} style={styles.box} keyboardType="number-pad" maxLength={1} onChange={(e) => {changeAnswerValue(i, j , e.nativeEvent.text)}}></TextInput>
+                return <TextInput key={j} style={styles.box} keyboardType="number-pad" maxLength={1} onChange={(e) => {changeAnswerValue(i, j , e.nativeEvent.text)}}>{answer[i][j] === 0 ? '' : answer[i][j] }</TextInput>
                 }
               })}
             </View>
           )
-        })}
+        }) : () => { return <Text>Please Wait</Text>}}
       </View>
       <View style={{flexDirection: "row"}}>
         <Button
@@ -108,6 +107,7 @@ export default function Games(props) {
           color="blue"
         />
       </View>
+      <Text></Text>
     </View>
   )
 }

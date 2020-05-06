@@ -6,8 +6,8 @@ import Constants from 'expo-constants';
 
 import Home from './screens/Home';
 import Games from './screens/Games';
-import HowToPlay from './screens/HowToPlay'
-
+import HowToPlay from './screens/HowToPlay';
+import Finish from './screens/Finish';
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -19,6 +19,7 @@ export default function App() {
             <Stack.Screen name="Home" component={Home} options={{headerShown: false,}}></Stack.Screen>
             <Stack.Screen name="Games" component={Games} options={{headerShown: false,}}></Stack.Screen>
             <Stack.Screen name="HowToPlay" component={HowToPlay} options={{headerShown: false,}}></Stack.Screen>
+            <Stack.Screen name="Finish" component={Finish} options={{headerShown: false,}}></Stack.Screen>
           </Stack.Navigator>
         </NavigationContainer>
     </>
