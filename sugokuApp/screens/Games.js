@@ -1,21 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
-import { greaterThan } from 'react-native-reanimated';
+import { StyleSheet, Text, View, Button, TextInput, Alert } from 'react-native';
 
-export default function Games() {
-  const  data = [
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0]
-  ]
+export default function Games(props) {
+  
+  const name = props.route.params.name
+  const level = props.route.params.level
+
   const [board, setBoard] = useState([])
-  const [answer, setAnswer] = useState(data)
+  const [answer, setAnswer] = useState([])
+  let temp = []
   const encodeBoard = (board) => board.reduce((result, row, i) => result + `%5B${encodeURIComponent(row)}%5D${i === board.length -1 ? '' : '%2C'}`, '')
 
   const encodeParams = (params) => 
@@ -24,26 +17,68 @@ export default function Games() {
     .join('&');
 
   function solve() {
-    const data = {board:[[0,0,0,0,0,0,8,0,0],[0,0,4,0,0,8,0,0,9],[0,7,0,0,0,0,0,0,5],[0,1,0,0,7,5,0,0,8],[0,5,6,0,9,1,3,0,0],[7,8,0,0,0,0,0,0,0],[0,2,0,0,0,0,0,0,0],[0,0,0,9,3,0,0,1,0],[0,0,5,7,0,0,4,0,3]]}
-
-  
+    const data = { board: board }
+    fetch('https://sugoku.herokuapp.com/solve', {
+      method: 'POST',
+      body: encodeParams(data),
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    })
+      .then(res => res.json())
+      .then(result => {
+          setBoard(result.solution)
+      })
+      .catch(console.warn)
   }
+  function validateAnswer() {
+    const data = { board: answer }
+    fetch('https://sugoku.herokuapp.com/validate', {
+      method: 'POST',
+      body: encodeParams(data),
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    })
+      .then(res => res.json())
+      .then(result => {
+        Alert.alert(
+          "Unsolved",
+          "Continue ?",
+          [
+            {
+              text: "Exit",
+              onPress: () => props.navigation.navigate('Home'),
+              style: "cancel"
+            },
+            { text: "OK", onPress: () => console.log("OK Pressed") }
+          ],
+          { cancelable: false }
+        );
+        // console.log(result)
+        // if (result.status === 'unsolved' ) {
+        //   alert('Unsolved: Try again!')
+        // } else {
+        //   props.navigation.navigate('Finish', { name, isWin: true })
+        // }
+      })
+      .catch(console.warn)
+  }
+
   function changeAnswerValue(row, col, val) {
-      console.log('asas')
-      data[row][col] = val
-      setAnswer(data)
+    let temp = board
+    temp[row][col] = val
+    setAnswer(temp)
   }
   useEffect(() => {
-    fetch('https://sugoku.herokuapp.com/board?difficulty=random')
+    fetch('https://sugoku.herokuapp.com/board?difficulty='.concat(level))
     .then(res => res.json())
     .then(data => {
       setBoard(data.board)
+      setAnswer(data.board)
     })
+
   }, [])
 
   return (
     <View style={styles.container}>
-      <Text>Game Board</Text>
+      <Text>Level : {level}</Text>
 
       <View style={styles.boxes}>
         { board.map((row, i) => {
@@ -60,12 +95,19 @@ export default function Games() {
           )
         })}
       </View>
-      <Button
-        onPress={() => alert(answer)}
-        title="Solve"
-        color="#841584"
-        accessibilityLabel="Learn more about this purple button"
-      />
+      <View style={{flexDirection: "row"}}>
+        <Button
+          onPress={solve}
+          title="Solve"
+          color="#841584"
+        />
+
+        <Button
+          onPress={validateAnswer}
+          title="Validate"
+          color="blue"
+        />
+      </View>
     </View>
   )
 }

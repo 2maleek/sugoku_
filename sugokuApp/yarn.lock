@@ -4375,6 +4375,11 @@ react-native-screens@~2.2.0:
   dependencies:
     debounce "^1.2.0"
 
+react-native-spacer@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/react-native-spacer/-/react-native-spacer-1.5.1.tgz#54bd5bf13fc975884fe664cd95dd3c26f1b0f307"
+  integrity sha512-7hmNQS3oPVgZUSiX97oCwDy4wR6DHAploTCA20svhq9uuaQ/HGDh1IfztKCSIoydfAB2q/aTNjIYhZet+3C9vA==
+
 react-native-view-shot@3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/react-native-view-shot/-/react-native-view-shot-3.1.2.tgz#8c8e84c67a4bc8b603e697dbbd59dbc9b4f84825"

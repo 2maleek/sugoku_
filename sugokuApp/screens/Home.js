@@ -23,10 +23,9 @@ export default function Home(props) {
     const selectLevel = (lvl) => {
         setLevel(lvl)
         setLevelSelected(false)
-        alert('kepincut select level')
     }
     const playButtonAction = () => {
-        props.navigation.navigate('Games')
+        props.navigation.navigate('Games', {name, level})
     }
 
     return (
@@ -47,6 +46,9 @@ export default function Home(props) {
             </View>
             <View style={styles.buttonPlay}>
                 <Button title="Play!" color="green" disabled={levelSelected} onPress={playButtonAction}></Button>
+            </View>
+            <View>
+                <Text style={styles.level}>Selected Level : {level}</Text>
             </View>
         </View>
 
@@ -73,5 +75,10 @@ const styles = StyleSheet.create({
     buttonPlay: {
         marginTop: 20,
         width: 200, height: 30, fontSize: 15
-    }
+		},
+		level: {
+			marginTop: 30,
+			backgroundColor: 'red',
+			borderColor: 'orange',
+		}
 });
