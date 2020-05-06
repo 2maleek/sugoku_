@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "app",
-    "slug": "app",
+    "name": "sugokuApp",
+    "slug": "sugokuApp",
     "platforms": [
       "ios",
       "android",

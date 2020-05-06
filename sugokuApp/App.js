@@ -1,61 +1,36 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
+import React from 'react';
+import { View, StyleSheet} from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import Constants from 'expo-constants';
+
+import Home from './screens/Home';
+import Games from './screens/Games';
+import HowToPlay from './screens/HowToPlay'
+
+const Stack = createStackNavigator();
 
 export default function App() {
-  const [board, setBoard] = useState([])
-
-  useEffect(() => {
-    fetch('https://sugoku.herokuapp.com/board?difficulty=easy')
-    .then(res => res.json())
-    .then(data => {
-      setBoard(data.board)
-    })
-  }, [])
-
-  return (
-    <View style={styles.container}>
-      <Text>Game Board</Text>
-
-      <View style={styles.boxes}>
-        { board.map((row, i) => {
-          return (
-            <View key={i} style={styles.column}>
-              { row.map((col, j) => {
-                if(col > 0) {
-                  return <Text style={styles.box}>{col}</Text>
-                }else {
-                return <TextInput style={styles.box} keyboardType="number-pad" maxLength={1}>{col}</TextInput>
-                }
-              })}
-            </View>
-          )
-        })}
-      <Text>Setelah loop</Text>
-
-      </View>
-    </View>
+  return(
+    <>
+      <View style={styles.statusBar} />
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen name="Home" component={Home} options={{headerShown: false,}}></Stack.Screen>
+            <Stack.Screen name="Games" component={Games} options={{headerShown: false,}}></Stack.Screen>
+            <Stack.Screen name="HowToPlay" component={HowToPlay} options={{headerShown: false,}}></Stack.Screen>
+          </Stack.Navigator>
+        </NavigationContainer>
+    </>
   )
 }
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  statusBar: {
+    backgroundColor: "#b19cff",
+    height: Constants.statusBarHeight,
   },
-  box: {
-    width: 40,
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    textAlign: 'center'
-  },
-  column: {
-    display: 'flex',
-    flexDirection: 'row'
-  },
-  boxes: {
-    margin: 20,
+  header: {
+    backgroundColor: "#b19cff",
+    height: 50
   }
-});
+})
